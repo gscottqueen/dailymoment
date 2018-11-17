@@ -1,29 +1,55 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import React, { Component } from 'react';
+import OneSignal from 'react-native-onesignal';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import {
+  StyleSheet,
+  Text,
+  View,
+  // Platform,
+} from 'react-native';
 
-type Props = {};
-export default class App extends Component<Props> {
+class App extends Component {
+
+  constructor(props) {
+    super(props);
+    OneSignal.init("9bcef8fd-7a71-4144-bb50-29c4d20c9894");
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+  }
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('received', this.onReceived);
+    OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.removeEventListener('ids', this.onIds);
+  }
+
+  onReceived(notification) {
+    console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds(device) {
+    console.log('Device info: ', device);
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Boom Boom Baby Got that local Env Working :P</Text>
-        {/* <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text> */}
+        <Text style={styles.welcome}>
+          Take control of your anxiety, one moment at a time.
+        </Text>
+        <Text style={styles.instructions}>
+        Once a day reminders to take a breath, capture the moment, and own your peace of mind. ✌️
+        </Text>
       </View>
     );
   }
@@ -34,16 +60,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#29203a',
   },
   welcome: {
-    fontSize: 20,
+    fontSize: 30,
     textAlign: 'center',
-    margin: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    margin: 25,
   },
   instructions: {
+    fontSize: 20,
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    color: 'white',
+    margin: 30,
   },
 });
+
+export default App;
